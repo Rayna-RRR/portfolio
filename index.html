@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>任玥｜数据运营作品集 (重构版)</title>
+    <meta name="description" content="任玥的数据运营作品集，围绕数据分析、活动运营分析、游戏体验拆解与结构化表达展开。" />
+    <style>
+        /* --- iOS 26 Inspired Redesign --- */
+
+        /* 1. Root & Base Configuration */
+        :root {
+            --system-blue: #007aff;
+            --system-gray-5: #f5f5f7;
+            --system-gray-6: #f2f2f7;
+            --card-background: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #8a8a8e;
+            --monospace-font: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            --body-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* 2. Reset & General Typography */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--body-font);
+            color: var(--text-primary);
+            background-color: var(--system-gray-6);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 3. Layout & Containers */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        main {
+            padding: 3rem 0;
+        }
+
+        section {
+            padding: 3rem 0;
+        }
+
+        .flex-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .flex-grid > * {
+            flex: 1 1 100%;
+        }
+
+        @media (min-width: 768px) {
+            .flex-grid.grid-2-col > .card {
+                flex-basis: calc(50% - 12px);
+            }
+            .flex-grid.grid-3-col > .card {
+                flex-basis: calc(33.333% - 16px);
+            }
+            .col-md-2-5 { flex-basis: 40%; }
+            .col-md-3-5 { flex-basis: 60%; }
+        }
+
+        /* 4. Header & Navigation */
+        .header {
+            background-color: rgba(249, 249, 249, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .main-nav a {
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .main-nav a:hover, .main-nav a.active {
+            color: var(--system-blue);
+        }
+
+        /* 5. Card UI */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-content {
+            flex-grow: 1;
+        }
+
+        /* 6. Typography & Content Styling */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+        h1 { font-size: 2.8rem; letter-spacing: -0.5px; }
+        h2 { font-size: 2.2rem; color: var(--text-primary); margin-bottom: 2rem; }
+        h3 { font-size: 1.3rem; }
+        h4 { font-size: 1.1rem; color: var(--system-blue); }
+
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        p:last-child { margin-bottom: 0; }
+
+        a { color: var(--system-blue); text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: none; opacity: 0.8; }
+        
+        /* 7. Components */
+        .section-header { margin-bottom: 2.5rem; text-align: center; }
+        .section-header h2 {
+            margin-bottom: 0.5rem;
+        }
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 65ch;
+            margin: 0 auto;
+        }
+
+        .numeric-marker {
+            font-family: var(--monospace-font);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--system-blue);
+            margin-bottom: 0.5rem;
+            background-color: rgba(0,122,255,0.1);
+            border-radius: 6px;
+            padding: 4px 8px;
+            display: inline-block;
+        }
+
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto; /* Pushes tags to the bottom */
+            padding-top: 1rem;
+        }
+        .tag {
+            background-color: var(--system-gray-5);
+            color: var(--text-secondary);
+            font-family: var(--monospace-font);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-links {
+             margin-top: 1.5rem;
+             display: flex;
+             flex-wrap: wrap;
+             gap: 12px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .btn.btn-primary { background-color: var(--system-blue); color: white; }
+        .btn.btn-primary:hover { background-color: #0060c0; text-decoration: none; }
+        .btn.btn-secondary { background-color: var(--system-gray-5); border-color: transparent; color: var(--text-primary); }
+        .btn.btn-secondary:hover { background-color: #e5e5ea; text-decoration: none; }
+
+        .detail-pane {
+            background: var(--system-gray-5);
+            padding: 20px;
+            border-radius: 16px;
+            height: 100%;
+        }
+
+        .footer {
+            padding: 3rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            background-color: var(--system-gray-5);
+        }
+
+        .footer #contact .card {
+            margin: 0 auto 2rem;
+            max-width: 800px;
+            background-color: #fff;
+            text-align: left;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            .header .container { flex-direction: column; gap: 1rem; }
+            .main-nav ul { justify-content: center; flex-wrap: wrap; gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a class="logo" href="#top">任玥</a>
+            <nav class="main-nav" aria-label="站点导航">
+                <ul>
+                    <li><a href="#projects">项目概览</a></li>
+                    <li><a href="#cases">项目展开</a></li>
+                    <li><a href="#resume-fit">简历信息</a></li>
+                    <li><a href="#contact">联系</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="container">
+            <div class="flex-grid" style="align-items: center; gap: 2rem;">
+                <div class="col-md-3-5">
+                    <h1 style="color: var(--tech-blue);">数据驱动，洞见价值</h1>
+                    <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 60ch;">
+                        您好，我是任玥。一名拥有数据科学背景，并对游戏、内容行业充满热情的数据运营。我擅长将数据分析、运营思路与用户体验相结合，发现问题，驱动增长。
+                    </p>
+                    <div class="tag-group" style="margin: 2rem 0;">
+                        <span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Tableau</span><span class="tag">Excel</span><span class="tag">用户分层</span><span class="tag">指标体系</span>
+                    </div>
+                    <div class="action-links">
+                        <a href="#projects" class="btn btn-primary">查看项目</a>
+                        <a href="任玥_国内数据运营_实习.pdf" target="_blank" rel="noreferrer" class="btn btn-secondary">简历 PDF</a>
+                    </div>
+                </div>
+                <div class="col-md-2-5">
+                     <div class="card">
+                         <h4>快速匹配</h4>
+                         <p><strong>教育:</strong> 香港浸会大学 AI 与数字媒体硕士 (在读) / 内蒙古财经大学 数据科学学士</p>
+                         <p><strong>经验:</strong> 数据分析实习 (蒙牛)，负责数据清洗、报表整理与波动分析。</p>
+                         <p><strong>求职:</strong> 数据运营 (实习) @ 深圳/上海</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="section-header">
+                <h2>作品集核心能力展示</h2>
+            </div>
+            <div class="flex-grid grid-3-col">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="numeric-marker">01</div>
+                        <h3>基础数据能力</h3>
+                        <p>通过数据看板与团队分析平台，展示数据清洗、指标整理、可视化表达与基础问题识别能力。</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <div class="numeric-marker">02</div>
+                        <h3>活动分析思路</h3>
+                        <p>通过活动运营决策模拟器，把用户分层、方案配置、指标对照与复盘逻辑放进同一条分析链路里。</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <div class="numeric-marker">03</div>
+                        <h3>游戏体验转译</h3>
+                        <p>通过真实游玩后的拆解分析，把玩家感受转成更贴近运营岗位的观察点、指标关注点与优化思路。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="container">
+            <div class="section-header">
+                <h2>项目概览</h2>
+                <p>项目按岗位相关性排序，优先展示数据与运营分析能力。</p>
+            </div>
+            <div class="flex-grid grid-2-col">
+                <div class="card">
+                    <div class="card-content">
+                        <h4 style="color: var(--text-secondary); font-size:0.9rem;">代表项目 / 活动运营分析原型</h4>
+                        <h3>《潜水员戴夫》活动运营决策模拟器</h3>
+                        <p>基于《潜水员戴夫》玩法循环，假设其被改造为长线运营手游，使用 Streamlit 搭建交互式数据工具与活动运营分析原型。</p>
+                    </div>
+                    <div class="tag-group">
+                        <span class="tag">Streamlit</span><span class="tag">用户分层</span><span class="tag">活动配置</span><span class="tag">方案对照</span>
+                    </div>
+                    <div class="action-links">
+                        <a href="#case-dave" class="btn btn-secondary">查看详情</a>
+                        <a href="https://dave-liveops-simulator-bd9u9gttoxxcywdw4pshkc.streamlit.app/" target="_blank" class="btn btn-secondary">在线演示</a>
+                        <a href="https://github.com/Rayna-RRR/dave-liveops-simulator" target="_blank" class="btn btn-secondary">GitHub</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h4 style="color: var(--text-secondary); font-size:0.9rem;">数据分析 / 指标体系与看板</h4>
+                        <h3>游戏运营数据看板</h3>
+                        <p>基于公开游戏数据完成清洗与聚合，围绕 DAU、留存、付费率、ARPU 等核心指标搭建数据看板。</p>
+                    </div>
+                    <div class="tag-group">
+                        <span class="tag">Python</span><span class="tag">Plotly</span><span class="tag">Tableau</span><span class="tag">留存分析</span>
+                    </div>
+                    <div class="action-links">
+                        <a href="#case-dashboard" class="btn btn-secondary">查看详情</a>
+                        <a href="https://rayna-rrr.github.io/gamelytics-dashboard/" target="_blank" class="btn btn-secondary">在线看板</a>
+                        <a href="https://github.com/Rayna-RRR/gamelytics-dashboard" target="_blank" class="btn btn-secondary">GitHub</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h4 style="color: var(--text-secondary); font-size:0.9rem;">体验分析 / 观察转译</h4>
+                        <h3>《潜水员戴夫》体验分析报告</h3>
+                        <p>基于 70+ 小时真实游玩体验，围绕玩法循环、玩家体验、节奏变化与留存逻辑完成游戏拆解分析文档。</p>
+                    </div>
+                    <div class="tag-group">
+                        <span class="tag">70+ 小时体验</span><span class="tag">节奏拆解</span><span class="tag">留存逻辑</span>
+                    </div>
+                    <div class="action-links">
+                        <a href="#case-report" class="btn btn-secondary">查看详情</a>
+                        <a href="《潜水员戴夫》分析报告.pdf" target="_blank" rel="noreferrer" class="btn btn-secondary">查看报告</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h4 style="color: var(--text-secondary); font-size:0.9rem;">团队项目 / 协作型分析</h4>
+                        <h3>咖啡分析平台</h3>
+                        <p>与 4 名同学合作完成数据分析平台，负责部分数据库表结构、SQL 查询与前端页面搭建。</p>
+                    </div>
+                    <div class="tag-group">
+                        <span class="tag">SQL</span><span class="tag">数据库</span><span class="tag">前端</span><span class="tag">团队协作</span>
+                    </div>
+                    <div class="action-links">
+                        <a href="#case-coffee" class="btn btn-secondary">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cases" class="container">
+            <div class="section-header">
+                <h2>项目展开</h2>
+                <p>每个案例都按照“背景、职责、产出、价值”展开，方便快速判断项目含金量。</p>
+            </div>
+            
+            <div class="card" id="case-dave" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                <div class="flex-grid" style="gap: 2rem;">
+                    <div class="col-md-2-5">
+                        <div class="numeric-marker">01</div>
+                        <h3>《潜水员戴夫》活动运营决策模拟器</h3>
+                        <p>将单机游戏改编为长线运营模型，以展示我对活动体系设计的理解。</p>
+                    </div>
+                    <div class="col-md-3-5">
+                        <div class="flex-grid grid-2-col">
+                            <div class="detail-pane"><h4>项目背景</h4><p>假设《潜水员戴夫》需长线运营，目标是用岗位语言展示活动策划与分析链路。</p></div>
+                            <div class="detail-pane"><h4>我的职责</h4><p>设计“用户分层-活动配置-方案对照-活动复盘”四模块，并用合成数据模拟指标变化。</p></div>
+                            <div class="detail-pane"><h4>输出内容</h4><p>一个可交互的分析原型，整合了活动方案从目标识别到复盘的全流程。</p></div>
+                            <div class="detail-pane"><h4>岗位价值</h4><p>证明我能将数据、目标、资源、方案整合为分析闭环，而不只停留在表面。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="case-dashboard" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                 <div class="flex-grid" style="gap: 2rem;">
+                    <div class="col-md-2-5">
+                        <div class="numeric-marker">02</div>
+                        <h3>游戏运营数据看板</h3>
+                        <p>此项目直接展示了我的基础数据处理能力和指标表达能力，是作品集中的核心案例。</p>
+                    </div>
+                    <div class="col-md-3-5">
+                        <div class="flex-grid grid-2-col">
+                            <div class="detail-pane"><h4>项目背景</h4><p>使用公开数据，在模拟业务场景中练习活跃、留存、付费等核心指标的观察。</p></div>
+                            <div class="detail-pane"><h4>我的职责</h4><p>搭建指标体系与可视化看板，明确指标口径、样本范围与结论边界。</p></div>
+                            <div class="detail-pane"><h4>输出内容</h4><p>完成数据整理、指标定义、图表组织、问题识别与初步优化建议。</p></div>
+                            <div class="detail-pane"><h4>岗位价值</h4><p>展示我对核心运营指标的理解，以及将数据结果清晰呈现的能力。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+						
+						 <div class="card" id="case-report" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                 <div class="flex-grid" style="gap: 2rem;">
+                    <div class="col-md-2-5">
+                        <div class="numeric-marker">03</div>
+                        <h3>《潜水员戴夫》分析报告</h3>
+                        <p>补足数据项目外的产品理解和玩家视角，让作品集不只停留在纯指标层。</p>
+                    </div>
+                    <div class="col-md-3-5">
+                        <div class="flex-grid grid-2-col">
+                            <div class="detail-pane"><h4>项目背景</h4><p>基于70+小时Switch版真实体验，分析其玩法循环、节奏与留存逻辑。</p></div>
+                            <div class="detail-pane"><h4>我的职责</h4><p>从玩家视角总结驱动力与疲劳感来源，并转译为运营岗位的指标关注点。</p></div>
+                            <div class="detail-pane"><h4>输出内容</h4><p>将主观体验整合成结构化的观察框架，用岗位语言表达。</p></div>
+                            <div class="detail-pane"><h4>岗位价值</h4><p>补足游戏理解和用户视角表达能力，适合游戏运营或用户研究岗。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+						<div class="card" id="case-coffee" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                 <div class="flex-grid" style="gap: 2rem;">
+                    <div class="col-md-2-5">
+                        <div class="numeric-marker">04</div>
+                        <h3>咖啡分析平台</h3>
+                        <p>展示在团队环境中的协作、需求理解和成果表达能力。</p>
+                    </div>
+                    <div class="col-md-3-5">
+                        <div class="flex-grid grid-2-col">
+                            <div class="detail-pane"><h4>项目背景</h4><p>与4名同学合作开发数据分析平台，重点是协作流程而非行业本身。</p></div>
+                            <div class="detail-pane"><h4>我的职责</h4><p>负责部分数据库表结构、SQL查询和前端页面，并参与最终方案讲解。</p></div>
+                            <div class="detail-pane"><h4>输出内容</h4><p>一个平台型项目，积累了BI展示、数仓逻辑、需求理解和协作经验。</p></div>
+                            <div class="detail-pane"><h4>岗位价值</h4><p>证明我能在协作环境中完成基础分析和结构化呈现任务。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="resume-fit" class="container">
+            <div class="section-header">
+                <h2>简历与技能</h2>
+            </div>
+            <div class="flex-grid grid-3-col">
+                <div class="card">
+                    <h3>教育背景</h3>
+                    <p><strong>香港浸会大学 (HKBU)</strong><br>理学硕士, AI与数字媒体 | 2025.09 - 2026.10 (预计)</p>
+                    <p><strong>内蒙古财经大学</strong><br>工学学士, 数据科学与大数据技术 | 2020.09 - 2024.06</p>
+                </div>
+                 <div class="card">
+                    <h3>实习经验</h3>
+                    <p><strong>内蒙古蒙牛高新乳业有限公司</strong><br>数据分析实习生 | 2023.07 – 2023.09</p>
+										<p>协助分析数据波动，使用 Python/Excel 清洗数据、检查字段、辅助报表；支持周报、月报汇总。</p>
+                </div>
+                 <div class="card">
+                    <h3>技能清单</h3>
+                    <p><strong>分析:</strong> Python (Pandas), SQL, Excel, Tableau, Plotly</p>
+                    <p><strong>知识:</strong> 留存/活跃/付费等指标体系, 数据挖掘, 机器学习</p>
+										<p><strong>工程:</strong> HTML/CSS/JS, Git/GitHub, AI应用</p>
+                </div>
+            </div>
+        </section>
+        
+    <footer class="footer">
+        <section id="contact" class="container">
+             <div class="card">
+                 <div class="flex-grid" style="align-items: center; gap: 2rem;">
+                     <div class="col-md-3-5">
+                        <h2 style="margin-bottom: 1rem;">与我联系</h2>
+												<p style="color: var(--text-secondary);">期待有机会与您交流。如果您对我的经历感兴趣，请通过以下方式联系我。</p>
+												<div class="action-links">
+														<a href="mailto:rayna162002@163.com" class="btn btn-primary">发送邮件</a>
+														<a href="任玥_国内数据运营_实习.pdf" target="_blank" rel="noreferrer" class="btn btn-secondary">下载简历</a>
+												</div>
+                     </div>
+                     <div class="col-md-2-5">
+                        <p><strong>邮箱:</strong> <a href="mailto:rayna162002@163.com">rayna162002@163.com</a></p>
+                        <p><strong>电话:</strong> <a href="tel:+8618823386641">+86 18823386641</a></p>
+                        <p><strong>微信:</strong> Ray_Apr</p>
+												<p><strong>GitHub:</strong> <a href="https://github.com/Rayna-RRR" target="_blank">Rayna-RRR</a></p>
+                     </div>
+                 </div>
+             </div>
+        </section>
+        <div class="container">
+            <p>© 2026 任玥作品集。为数据运营岗位设计与重构。</p>
+        </div>
+    </footer>
+
+</body>
+</html>
